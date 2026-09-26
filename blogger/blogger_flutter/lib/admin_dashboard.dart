@@ -1,7 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:blogger_client/blogger_client.dart';
 import 'universal_renderer.dart';
+import 'post_editor.dart';
+import 'theme_customizer.dart';
+import 'layout_editor.dart';
+import 'comment_manager.dart';
+import 'stats_view.dart';
 
 class BloggerAdminDashboard extends StatefulWidget {
   final Client client;
@@ -117,7 +121,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
             onDestinationSelected: (index) => setState(() => _selectedIndex = index),
             labelType: NavigationRailLabelType.all,
             leading: FloatingActionButton.extended(
-              onPressed: _createNewPostDialog,
+              onPressed: _createNewPostView,
               icon: const Icon(Icons.add),
               label: const Text('NEW POST'),
               backgroundColor: Colors.orange.shade800,
@@ -129,13 +133,13 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
               NavigationRailDestination(icon: Icon(Icons.comment_outlined), selectedIcon: Icon(Icons.comment), label: Text('Comments')),
               NavigationRailDestination(icon: Icon(Icons.attach_money_outlined), selectedIcon: Icon(Icons.attach_money), label: Text('Earnings')),
               NavigationRailDestination(icon: Icon(Icons.pages_outlined), selectedIcon: Icon(Icons.pages), label: Text('Pages')),
+              NavigationRailDestination(icon: Icon(Icons.palette_outlined), selectedIcon: Icon(Icons.palette), label: Text('Theme Customizer')),
+              NavigationRailDestination(icon: Icon(Icons.dashboard_customize_outlined), selectedIcon: Icon(Icons.dashboard_customize), label: Text('Layout Editor')),
               NavigationRailDestination(icon: Icon(Icons.alt_route_outlined), selectedIcon: Icon(Icons.alt_route), label: Text('Redirects')),
               NavigationRailDestination(icon: Icon(Icons.rss_feed_outlined), selectedIcon: Icon(Icons.rss_feed), label: Text('Atom/RSS')),
               NavigationRailDestination(icon: Icon(Icons.perm_identity_outlined), selectedIcon: Icon(Icons.perm_identity), label: Text('Permissions')),
               NavigationRailDestination(icon: Icon(Icons.perm_media_outlined), selectedIcon: Icon(Icons.perm_media), label: Text('Media')),
               NavigationRailDestination(icon: Icon(Icons.mark_email_read_outlined), selectedIcon: Icon(Icons.mark_email_read), label: Text('Subscribers')),
-              NavigationRailDestination(icon: Icon(Icons.palette_outlined), selectedIcon: Icon(Icons.palette), label: Text('Theme')),
-              NavigationRailDestination(icon: Icon(Icons.dashboard_customize_outlined), selectedIcon: Icon(Icons.dashboard_customize), label: Text('Layout')),
               NavigationRailDestination(icon: Icon(Icons.chrome_reader_mode_outlined), selectedIcon: Icon(Icons.chrome_reader_mode), label: Text('Reading List')),
               NavigationRailDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: Text('Settings')),
             ],
@@ -148,17 +152,17 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
                     index: _selectedIndex,
                     children: [
                       _buildPostsTab(),
-                      _buildStatsTab(),
-                      _buildCommentsTab(),
+                      StatsView(client: widget.client, blogId: _blogId),
+                      CommentManagerView(client: widget.client, blogId: _blogId),
                       _buildEarningsTab(),
                       _buildPagesTab(),
+                      ThemeCustomizerView(client: widget.client, blogId: _blogId),
+                      LayoutEditorView(client: widget.client, blogId: _blogId),
                       _buildRedirectsTab(),
                       _buildFeedTab(),
                       _buildPermissionsTab(),
                       _buildMediaTab(),
                       _buildSubscribersTab(),
-                      _buildThemeTab(),
-                      _buildLayoutTab(),
                       _buildReadingListTab(),
                       _buildSettingsTab(),
                     ],
@@ -198,7 +202,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
               ),
               const SizedBox(width: 12),
               ElevatedButton.icon(
-                onPressed: _createNewPostDialog,
+                onPressed: _createNewPostView,
                 icon: const Icon(Icons.add),
                 label: const Text('Create Post'),
               ),
@@ -226,6 +230,11 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.orange),
+                              tooltip: 'Edit Post',
+                              onPressed: () => _editPostView(post),
+                            ),
+                            IconButton(
                               icon: const Icon(Icons.visibility, color: Colors.blue),
                               tooltip: 'Preview Universal JSON-LD Render',
                               onPressed: () => _previewPost(post),
@@ -235,118 +244,6 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
                               onPressed: () async {
                                 if (post.id != null) {
                                   await widget.client.blogger.deletePost(post.id!);
-                                  _loadDashboardData();
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-        ),
-      ],
-    );
-  }
-
-  // --- 2. Stats Tab ---
-  Widget _buildStatsTab() {
-    final totalViews = _stats.fold<int>(0, (sum, item) => sum + item.pageViews);
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Analytics & Performance', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              _buildStatCard('Total Pageviews', '$totalViews', Icons.remove_red_eye, Colors.blue),
-              const SizedBox(width: 16),
-              _buildStatCard('Total Posts', '${_posts.length}', Icons.article, Colors.orange),
-              const SizedBox(width: 16),
-              _buildStatCard('Comments', '${_comments.length}', Icons.comment, Colors.green),
-            ],
-          ),
-          const SizedBox(height: 32),
-          const Text('Recent Activity Log', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 12),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _stats.length,
-              itemBuilder: (context, index) {
-                final s = _stats[index];
-                return ListTile(
-                  leading: const Icon(Icons.trending_up, color: Colors.green),
-                  title: Text('${s.pageViews} views from ${s.country}'),
-                  subtitle: Text('Source: ${s.referrerSource} | Date: ${s.recordedDate.toIso8601String().split('T').first}'),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
-    return Expanded(
-      child: Card(
-        elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Icon(icon, size: 36, color: color),
-              const SizedBox(height: 12),
-              Text(value, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-              Text(title, style: const TextStyle(color: Colors.grey)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // --- 3. Comments Tab ---
-  Widget _buildCommentsTab() {
-    return Column(
-      children: [
-        const ListTile(
-          title: Text('Comment Moderation', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        ),
-        const Divider(),
-        Expanded(
-          child: _comments.isEmpty
-              ? const Center(child: Text('No comments yet.'))
-              : ListView.builder(
-                  itemCount: _comments.length,
-                  itemBuilder: (context, index) {
-                    final comment = _comments[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: ListTile(
-                        leading: CircleAvatar(child: Text(comment.authorName[0])),
-                        title: Text(comment.authorName),
-                        subtitle: Text(comment.content),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Switch(
-                              value: comment.isApproved,
-                              onChanged: (val) async {
-                                if (comment.id != null) {
-                                  await widget.client.blogger.updateCommentStatus(comment.id!, val);
-                                  _loadDashboardData();
-                                }
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () async {
-                                if (comment.id != null) {
-                                  await widget.client.blogger.deleteComment(comment.id!);
                                   _loadDashboardData();
                                 }
                               },
@@ -656,91 +553,6 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 11. Theme Tab ---
-  Widget _buildThemeTab() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: ListView(
-        children: [
-          const Text('Blog Theme & Style Customizer', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.palette, color: Colors.deepOrange, size: 36),
-              title: Text('Active Theme: ${_theme?.themeName ?? 'Contempo'}', style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text('Primary Color: ${_theme?.primaryColor ?? '#FF5722'} | Layout: ${_theme?.layoutVariant ?? 'SidebarRight'}'),
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text('Custom CSS Rules', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Colors.grey.shade900, borderRadius: BorderRadius.circular(8)),
-            child: Text(
-              _theme?.customCss ?? 'body { font-family: Roboto; background-color: #FAFAFA; }',
-              style: const TextStyle(fontFamily: 'monospace', color: Colors.cyanAccent),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // --- 12. Layout Tab ---
-  Widget _buildLayoutTab() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Theme Layout & Gadgets', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              children: [
-                _buildLayoutSection('Header / Top Navigation', Icons.view_headline),
-                _buildLayoutSection('Sidebar Gadgets (AdSense, Labels, Search)', Icons.view_sidebar),
-                _buildLayoutSection('Main Blog Posts Container', Icons.view_stream),
-                _buildLayoutSection('Footer & Copyright Notice', Icons.view_compact),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLayoutSection(String name, IconData icon) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: Colors.orange.shade800),
-                const SizedBox(width: 8),
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              ],
-            ),
-            const Divider(),
-            const Expanded(
-              child: Center(
-                child: Text('+ Add a Gadget', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   // --- 13. Reading List Tab ---
   Widget _buildReadingListTab() {
     return Padding(
@@ -803,7 +615,38 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- Dialog Helpers ---
+  // --- Navigation & View Navigation Helpers ---
+  void _createNewPostView() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PostEditorView(
+          client: widget.client,
+          blogId: _blogId,
+          onSaved: () {
+            Navigator.of(context).pop();
+            _loadDashboardData();
+          },
+        ),
+      ),
+    );
+  }
+
+  void _editPostView(BlogPost post) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PostEditorView(
+          client: widget.client,
+          blogId: _blogId,
+          postToEdit: post,
+          onSaved: () {
+            Navigator.of(context).pop();
+            _loadDashboardData();
+          },
+        ),
+      ),
+    );
+  }
+
   void _previewPost(BlogPost post) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -1013,10 +856,6 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
         ],
       ),
     );
-  }
-
-  void _createNewPostDialog() {
-    _showIngestDialog();
   }
 
   void _createNewPageDialog() {
