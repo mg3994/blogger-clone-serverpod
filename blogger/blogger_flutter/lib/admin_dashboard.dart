@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:blogger_client/blogger_client.dart';
 import 'universal_renderer.dart';
@@ -33,6 +34,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
   List<EmailSubscriber> _subscribers = [];
   List<CustomRedirect> _redirects = [];
   String _atomXmlFeed = '';
+  Map<String, dynamic>? _apiV3BlogResult;
 
   bool _isLoading = false;
   final TextEditingController _searchController = TextEditingController();
@@ -59,6 +61,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
       final subscribers = await widget.client.blogger.getSubscribers(_blogId);
       final redirects = await widget.client.blogger.getCustomRedirects(_blogId);
       final atomXml = await widget.client.blogger.generateAtomFeedXml(_blogId);
+      final apiV3Res = await widget.client.bloggerV3.blogsGet(blogId: '$_blogId');
 
       if (mounted) {
         setState(() {
@@ -75,6 +78,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
           _subscribers = subscribers;
           _redirects = redirects;
           _atomXmlFeed = atomXml;
+          _apiV3BlogResult = apiV3Res;
           _isLoading = false;
         });
       }
@@ -147,6 +151,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
               NavigationRailDestination(icon: Icon(Icons.comment_outlined), selectedIcon: Icon(Icons.comment), label: Text('Comments')),
               NavigationRailDestination(icon: Icon(Icons.attach_money_outlined), selectedIcon: Icon(Icons.attach_money), label: Text('Earnings')),
               NavigationRailDestination(icon: Icon(Icons.pages_outlined), selectedIcon: Icon(Icons.pages), label: Text('Pages')),
+              NavigationRailDestination(icon: Icon(Icons.api_outlined), selectedIcon: Icon(Icons.api), label: Text('Blogger v3 API')),
               NavigationRailDestination(icon: Icon(Icons.palette_outlined), selectedIcon: Icon(Icons.palette), label: Text('Theme Customizer')),
               NavigationRailDestination(icon: Icon(Icons.dashboard_customize_outlined), selectedIcon: Icon(Icons.dashboard_customize), label: Text('Layout Editor')),
               NavigationRailDestination(icon: Icon(Icons.alt_route_outlined), selectedIcon: Icon(Icons.alt_route), label: Text('Redirects')),
@@ -170,6 +175,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
                       CommentManagerView(client: widget.client, blogId: _blogId),
                       _buildEarningsTab(),
                       _buildPagesTab(),
+                      _buildBloggerV3ApiTab(),
                       ThemeCustomizerView(client: widget.client, blogId: _blogId),
                       LayoutEditorView(client: widget.client, blogId: _blogId),
                       _buildRedirectsTab(),
@@ -374,7 +380,64 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 6. Custom Redirects Tab ---
+  // --- 6. Blogger v3 REST API Developer Settings Tab ---
+  Widget _buildBloggerV3ApiTab() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Google Blogger API v3 REST Porting Settings', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          const Text('Access your blog resources programmatically using Blogger API v3 compliant endpoints.'),
+          const SizedBox(height: 20),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('API Key / Authorization Credentials', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    readOnly: true,
+                    initialValue: 'AIzaSyBloggerKey_9918237498172938',
+                    decoration: const InputDecoration(
+                      labelText: 'API Key',
+                      suffixIcon: Icon(Icons.copy),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text('Header Authorization Format: Bearer <your_session_token>', style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text('Live Blogger v3 REST Endpoint Tester Response (GET /blogger/v3/blogs/1)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 8),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Colors.grey.shade900, borderRadius: BorderRadius.circular(8)),
+              child: SingleChildScrollView(
+                child: SelectableText(
+                  _apiV3BlogResult != null
+                      ? const JsonEncoder.withIndent('  ').convert(_apiV3BlogResult)
+                      : '{"kind": "blogger#blog", "id": "1"}',
+                  style: const TextStyle(fontFamily: 'monospace', color: Colors.lightGreenAccent, fontSize: 12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 7. Custom Redirects Tab ---
   Widget _buildRedirectsTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -424,7 +487,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 7. Atom/RSS Feed Tab ---
+  // --- 8. Atom/RSS Feed Tab ---
   Widget _buildFeedTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -451,7 +514,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 8. Permissions / Private Blog Tab ---
+  // --- 9. Permissions / Private Blog Tab ---
   Widget _buildPermissionsTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -501,7 +564,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 9. Media Tab ---
+  // --- 10. Media Tab ---
   Widget _buildMediaTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -547,7 +610,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 10. Subscribers Tab ---
+  // --- 11. Subscribers Tab ---
   Widget _buildSubscribersTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -578,7 +641,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 13. Reading List Tab ---
+  // --- 14. Reading List Tab ---
   Widget _buildReadingListTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -609,7 +672,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 14. Settings Tab ---
+  // --- 15. Settings Tab ---
   Widget _buildSettingsTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -809,7 +872,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
             const Text('Blog Data JSON Backup:', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Container(
-              maxHeight: 200,
+              constraints: const BoxConstraints(maxHeight: 200),
               padding: const EdgeInsets.all(12),
               color: Colors.grey.shade100,
               child: SingleChildScrollView(

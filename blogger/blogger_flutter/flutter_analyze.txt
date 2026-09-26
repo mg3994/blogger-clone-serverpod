@@ -15,4 +15,32 @@ Got dependencies in `/app/blogger`!
 11 packages have newer versions incompatible with dependency constraints.
 Try `flutter pub outdated` for more information.
 Analyzing blogger_flutter...
-No issues found! (ran in 11.0s)
+
+  error • Target of URI doesn't exist: 'universal_renderer.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • lib/admin_dashboard.dart:4:8 • uri_does_not_exist
+  error • The name 'BlogPost' isn't a type, so it can't be used as a type argument. Try correcting the name to an existing type, or defining a type named 'BlogPost' • lib/admin_dashboard.dart:24:8 • non_type_as_type_argument
+  error • The name 'BlogPage' isn't a type, so it can't be used as a type argument. Try correcting the name to an existing type, or defining a type named 'BlogPage' • lib/admin_dashboard.dart:25:8 • non_type_as_type_argument
+warning • The value of the field '_comments' isn't used. Try removing the field, or using it • lib/admin_dashboard.dart:26:17 • unused_field
+warning • The value of the field '_stats' isn't used. Try removing the field, or using it • lib/admin_dashboard.dart:27:18 • unused_field
+warning • The value of the field '_theme' isn't used. Try removing the field, or using it • lib/admin_dashboard.dart:30:14 • unused_field
+  error • Invalid constant value • lib/admin_dashboard.dart:404:33 • invalid_constant
+  error • The method 'cookie' isn't defined for the type 'TextEditingController'. Try correcting the name to the name of an existing method, or defining a method named 'cookie' • lib/admin_dashboard.dart:404:55 • undefined_method
+  error • Undefined class 'BlogPost'. Try changing the name to the name of an existing class, or creating a class with the name 'BlogPost' • lib/admin_dashboard.dart:722:22 • undefined_class
+  error • Undefined class 'BlogPost'. Try changing the name to the name of an existing class, or creating a class with the name 'BlogPost' • lib/admin_dashboard.dart:738:21 • undefined_class
+  error • The method 'UniversalJsonLdRenderer' isn't defined for the type '_BloggerAdminDashboardState'. Try correcting the name to the name of an existing method, or defining a method named 'UniversalJsonLdRenderer' • lib/admin_dashboard.dart:743:17 • undefined_method
+  error • The named parameter 'maxHeight' isn't defined. Try correcting the name to an existing named parameter's name, or defining a named parameter with the name 'maxHeight' • lib/admin_dashboard.dart:875:15 • undefined_named_parameter
+  error • Target of URI doesn't exist: 'universal_renderer.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • lib/blog_reader_view.dart:3:8 • uri_does_not_exist
+  error • Undefined class 'BlogPost'. Try changing the name to the name of an existing class, or creating a class with the name 'BlogPost' • lib/blog_reader_view.dart:22:3 • undefined_class
+  error • Undefined class 'BlogSite'. Try changing the name to the name of an existing class, or creating a class with the name 'BlogSite' • lib/blog_reader_view.dart:23:3 • undefined_class
+  error • The method 'UniversalJsonLdRenderer' isn't defined for the type '_BlogReaderViewState'. Try correcting the name to the name of an existing method, or defining a method named 'UniversalJsonLdRenderer' • lib/blog_reader_view.dart:123:13 • undefined_method
+  error • The named parameter 'maxWidth' isn't defined. Try correcting the name to an existing named parameter's name, or defining a named parameter with the name 'maxWidth' • lib/blog_reader_view.dart:129:15 • undefined_named_parameter
+   info • 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre. Try replacing the use of the deprecated member with the replacement • lib/layout_editor.dart:50:15 • deprecated_member_use
+  error • Target of URI doesn't exist: 'universal_renderer.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • lib/post_editor.dart:4:8 • uri_does_not_exist
+  error • Undefined class 'BlogPost'. Try changing the name to the name of an existing class, or creating a class with the name 'BlogPost' • lib/post_editor.dart:9:9 • undefined_class
+  error • The method 'BlogPost' isn't defined for the type '_PostEditorViewState'. Try correcting the name to the name of an existing method, or defining a method named 'BlogPost' • lib/post_editor.dart:94:20 • undefined_method
+  error • The method 'UniversalJsonLdRenderer' isn't defined for the type '_PostEditorViewState'. Try correcting the name to the name of an existing method, or defining a method named 'UniversalJsonLdRenderer' • lib/post_editor.dart:147:19 • undefined_method
+   info • 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre. Try replacing the use of the deprecated member with the replacement • lib/post_editor.dart:178:33 • deprecated_member_use
+   info • 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre. Try replacing the use of the deprecated member with the replacement • lib/post_editor.dart:258:19 • deprecated_member_use
+   info • 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre. Try replacing the use of the deprecated member with the replacement • lib/theme_customizer.dart:141:21 • deprecated_member_use
+   info • 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre. Try replacing the use of the deprecated member with the replacement • lib/theme_customizer.dart:152:21 • deprecated_member_use
+
+26 issues found. (ran in 9.8s)
