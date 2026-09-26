@@ -1,0 +1,22 @@
+# Dart / Flutter build artifacts
+.dart_tool/
+.pub-cache/
+.pub/
+build/
+ephemeral/
+.packages
+
+# IDE / Editor files
+.idea/
+.vscode/
+*.iml
+
+# Platform native files inside blogger_flutter
+blogger_flutter/android/
+blogger_flutter/ios/
+blogger_flutter/macos/
+blogger_flutter/windows/
+blogger_flutter/linux/
+
+# Serverpod generated / local runtime files
+*.log

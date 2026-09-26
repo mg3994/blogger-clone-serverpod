@@ -1,0 +1,10 @@
+class: LayoutWidget
+table: blogger_layout_widget
+fields:
+  blogId: int
+  section: String # Header, Sidebar, Main, Footer
+  widgetType: String # Header, HTML, AdSense, PopularPosts, Labels, Profile, Custom
+  title: String
+  configJson: String # Settings and properties for this widget
+  sortOrder: int
+  isVisible: bool

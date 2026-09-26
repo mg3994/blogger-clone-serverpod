@@ -1,0 +1,395 @@
+{
+  "version": 1,
+  "installations": {
+    "claude": {
+      "relic": {
+        "skills": [
+          {
+            "name": "relic-websockets",
+            "installedAt": "2026-09-26T07:03:56.793406Z"
+          },
+          {
+            "name": "relic-shelf-migration",
+            "installedAt": "2026-09-26T07:03:56.796029Z"
+          },
+          {
+            "name": "relic-request-response",
+            "installedAt": "2026-09-26T07:03:56.798677Z"
+          },
+          {
+            "name": "relic-static-files",
+            "installedAt": "2026-09-26T07:03:56.800812Z"
+          },
+          {
+            "name": "relic-middleware",
+            "installedAt": "2026-09-26T07:03:56.802798Z"
+          },
+          {
+            "name": "relic-app-setup",
+            "installedAt": "2026-09-26T07:03:56.805136Z"
+          },
+          {
+            "name": "relic-routing",
+            "installedAt": "2026-09-26T07:03:56.807195Z"
+          }
+        ]
+      },
+      "serverpod": {
+        "skills": [
+          {
+            "name": "serverpod-database",
+            "installedAt": "2026-09-26T07:03:56.810498Z"
+          },
+          {
+            "name": "serverpod-endpoints",
+            "installedAt": "2026-09-26T07:03:56.812783Z"
+          },
+          {
+            "name": "serverpod-upgrading",
+            "installedAt": "2026-09-26T07:03:56.815561Z"
+          },
+          {
+            "name": "serverpod-streams",
+            "installedAt": "2026-09-26T07:03:56.817588Z"
+          },
+          {
+            "name": "serverpod-sessions",
+            "installedAt": "2026-09-26T07:03:56.819613Z"
+          },
+          {
+            "name": "serverpod-webserver",
+            "installedAt": "2026-09-26T07:03:56.823023Z"
+          },
+          {
+            "name": "serverpod-testing",
+            "installedAt": "2026-09-26T07:03:56.825966Z"
+          },
+          {
+            "name": "serverpod-logging",
+            "installedAt": "2026-09-26T07:03:56.830597Z"
+          },
+          {
+            "name": "serverpod-auth",
+            "installedAt": "2026-09-26T07:03:56.833622Z"
+          },
+          {
+            "name": "serverpod-deployment",
+            "installedAt": "2026-09-26T07:03:56.835547Z"
+          },
+          {
+            "name": "serverpod-models",
+            "installedAt": "2026-09-26T07:03:56.839122Z"
+          },
+          {
+            "name": "serverpod-file-uploads",
+            "installedAt": "2026-09-26T07:03:56.841130Z"
+          },
+          {
+            "name": "serverpod-caching",
+            "installedAt": "2026-09-26T07:03:56.843851Z"
+          },
+          {
+            "name": "serverpod-configuration",
+            "installedAt": "2026-09-26T07:03:56.846956Z"
+          },
+          {
+            "name": "serverpod-flutter-frontend",
+            "installedAt": "2026-09-26T07:03:56.849155Z"
+          },
+          {
+            "name": "serverpod-modules",
+            "installedAt": "2026-09-26T07:03:56.850882Z"
+          },
+          {
+            "name": "serverpod-scheduling",
+            "installedAt": "2026-09-26T07:03:56.852732Z"
+          },
+          {
+            "name": "serverpod-migrations",
+            "installedAt": "2026-09-26T07:03:56.854616Z"
+          },
+          {
+            "name": "serverpod-health-checks",
+            "installedAt": "2026-09-26T07:03:56.856434Z"
+          },
+          {
+            "name": "serverpod-server-events",
+            "installedAt": "2026-09-26T07:03:56.858206Z"
+          },
+          {
+            "name": "serverpod-overview",
+            "installedAt": "2026-09-26T07:03:56.860383Z"
+          }
+        ]
+      },
+      "synchronized": {
+        "skills": [
+          {
+            "name": "synchronized-lock",
+            "installedAt": "2026-09-26T07:03:56.863304Z"
+          }
+        ]
+      }
+    },
+    "cursor": {
+      "relic": {
+        "skills": [
+          {
+            "name": "relic-websockets",
+            "installedAt": "2026-09-26T07:03:56.865592Z"
+          },
+          {
+            "name": "relic-shelf-migration",
+            "installedAt": "2026-09-26T07:03:56.866458Z"
+          },
+          {
+            "name": "relic-request-response",
+            "installedAt": "2026-09-26T07:03:56.867332Z"
+          },
+          {
+            "name": "relic-static-files",
+            "installedAt": "2026-09-26T07:03:56.868151Z"
+          },
+          {
+            "name": "relic-middleware",
+            "installedAt": "2026-09-26T07:03:56.869018Z"
+          },
+          {
+            "name": "relic-app-setup",
+            "installedAt": "2026-09-26T07:03:56.870261Z"
+          },
+          {
+            "name": "relic-routing",
+            "installedAt": "2026-09-26T07:03:56.871079Z"
+          }
+        ]
+      },
+      "serverpod": {
+        "skills": [
+          {
+            "name": "serverpod-database",
+            "installedAt": "2026-09-26T07:03:56.871932Z"
+          },
+          {
+            "name": "serverpod-endpoints",
+            "installedAt": "2026-09-26T07:03:56.872787Z"
+          },
+          {
+            "name": "serverpod-upgrading",
+            "installedAt": "2026-09-26T07:03:56.873639Z"
+          },
+          {
+            "name": "serverpod-streams",
+            "installedAt": "2026-09-26T07:03:56.874507Z"
+          },
+          {
+            "name": "serverpod-sessions",
+            "installedAt": "2026-09-26T07:03:56.875503Z"
+          },
+          {
+            "name": "serverpod-webserver",
+            "installedAt": "2026-09-26T07:03:56.877953Z"
+          },
+          {
+            "name": "serverpod-testing",
+            "installedAt": "2026-09-26T07:03:56.879492Z"
+          },
+          {
+            "name": "serverpod-logging",
+            "installedAt": "2026-09-26T07:03:56.880264Z"
+          },
+          {
+            "name": "serverpod-auth",
+            "installedAt": "2026-09-26T07:03:56.881781Z"
+          },
+          {
+            "name": "serverpod-deployment",
+            "installedAt": "2026-09-26T07:03:56.882583Z"
+          },
+          {
+            "name": "serverpod-models",
+            "installedAt": "2026-09-26T07:03:56.884387Z"
+          },
+          {
+            "name": "serverpod-file-uploads",
+            "installedAt": "2026-09-26T07:03:56.885215Z"
+          },
+          {
+            "name": "serverpod-caching",
+            "installedAt": "2026-09-26T07:03:56.886035Z"
+          },
+          {
+            "name": "serverpod-configuration",
+            "installedAt": "2026-09-26T07:03:56.887801Z"
+          },
+          {
+            "name": "serverpod-flutter-frontend",
+            "installedAt": "2026-09-26T07:03:56.888681Z"
+          },
+          {
+            "name": "serverpod-modules",
+            "installedAt": "2026-09-26T07:03:56.889468Z"
+          },
+          {
+            "name": "serverpod-scheduling",
+            "installedAt": "2026-09-26T07:03:56.890275Z"
+          },
+          {
+            "name": "serverpod-migrations",
+            "installedAt": "2026-09-26T07:03:56.891234Z"
+          },
+          {
+            "name": "serverpod-health-checks",
+            "installedAt": "2026-09-26T07:03:56.892107Z"
+          },
+          {
+            "name": "serverpod-server-events",
+            "installedAt": "2026-09-26T07:03:56.892942Z"
+          },
+          {
+            "name": "serverpod-overview",
+            "installedAt": "2026-09-26T07:03:56.893731Z"
+          }
+        ]
+      },
+      "synchronized": {
+        "skills": [
+          {
+            "name": "synchronized-lock",
+            "installedAt": "2026-09-26T07:03:56.894961Z"
+          }
+        ]
+      }
+    },
+    "generic": {
+      "relic": {
+        "skills": [
+          {
+            "name": "relic-websockets",
+            "installedAt": "2026-09-26T07:03:56.897187Z"
+          },
+          {
+            "name": "relic-shelf-migration",
+            "installedAt": "2026-09-26T07:03:56.898127Z"
+          },
+          {
+            "name": "relic-request-response",
+            "installedAt": "2026-09-26T07:03:56.899021Z"
+          },
+          {
+            "name": "relic-static-files",
+            "installedAt": "2026-09-26T07:03:56.899874Z"
+          },
+          {
+            "name": "relic-middleware",
+            "installedAt": "2026-09-26T07:03:56.900813Z"
+          },
+          {
+            "name": "relic-app-setup",
+            "installedAt": "2026-09-26T07:03:56.901874Z"
+          },
+          {
+            "name": "relic-routing",
+            "installedAt": "2026-09-26T07:03:56.902741Z"
+          }
+        ]
+      },
+      "serverpod": {
+        "skills": [
+          {
+            "name": "serverpod-database",
+            "installedAt": "2026-09-26T07:03:56.904287Z"
+          },
+          {
+            "name": "serverpod-endpoints",
+            "installedAt": "2026-09-26T07:03:56.905328Z"
+          },
+          {
+            "name": "serverpod-upgrading",
+            "installedAt": "2026-09-26T07:03:56.906299Z"
+          },
+          {
+            "name": "serverpod-streams",
+            "installedAt": "2026-09-26T07:03:56.907365Z"
+          },
+          {
+            "name": "serverpod-sessions",
+            "installedAt": "2026-09-26T07:03:56.908188Z"
+          },
+          {
+            "name": "serverpod-webserver",
+            "installedAt": "2026-09-26T07:03:56.910117Z"
+          },
+          {
+            "name": "serverpod-testing",
+            "installedAt": "2026-09-26T07:03:56.911693Z"
+          },
+          {
+            "name": "serverpod-logging",
+            "installedAt": "2026-09-26T07:03:56.912809Z"
+          },
+          {
+            "name": "serverpod-auth",
+            "installedAt": "2026-09-26T07:03:56.914683Z"
+          },
+          {
+            "name": "serverpod-deployment",
+            "installedAt": "2026-09-26T07:03:56.915975Z"
+          },
+          {
+            "name": "serverpod-models",
+            "installedAt": "2026-09-26T07:03:56.918486Z"
+          },
+          {
+            "name": "serverpod-file-uploads",
+            "installedAt": "2026-09-26T07:03:56.919772Z"
+          },
+          {
+            "name": "serverpod-caching",
+            "installedAt": "2026-09-26T07:03:56.920790Z"
+          },
+          {
+            "name": "serverpod-configuration",
+            "installedAt": "2026-09-26T07:03:56.922993Z"
+          },
+          {
+            "name": "serverpod-flutter-frontend",
+            "installedAt": "2026-09-26T07:03:56.923855Z"
+          },
+          {
+            "name": "serverpod-modules",
+            "installedAt": "2026-09-26T07:03:56.924746Z"
+          },
+          {
+            "name": "serverpod-scheduling",
+            "installedAt": "2026-09-26T07:03:56.925565Z"
+          },
+          {
+            "name": "serverpod-migrations",
+            "installedAt": "2026-09-26T07:03:56.926403Z"
+          },
+          {
+            "name": "serverpod-health-checks",
+            "installedAt": "2026-09-26T07:03:56.927316Z"
+          },
+          {
+            "name": "serverpod-server-events",
+            "installedAt": "2026-09-26T07:03:56.928240Z"
+          },
+          {
+            "name": "serverpod-overview",
+            "installedAt": "2026-09-26T07:03:56.929082Z"
+          }
+        ]
+      },
+      "synchronized": {
+        "skills": [
+          {
+            "name": "synchronized-lock",
+            "installedAt": "2026-09-26T07:03:56.930123Z"
+          }
+        ]
+      }
+    }
+  }
+}

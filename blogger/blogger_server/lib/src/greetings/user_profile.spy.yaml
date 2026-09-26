@@ -1,0 +1,9 @@
+class: UserProfile
+table: blogger_user
+fields:
+  name: String
+  email: String
+  role: String # Admin, Author, Reader
+  avatarUrl: String?
+  bio: String?
+  createdAt: DateTime

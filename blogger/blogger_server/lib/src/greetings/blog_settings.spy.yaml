@@ -1,0 +1,13 @@
+class: BlogSettings
+table: blogger_settings
+fields:
+  blogId: int
+  language: String
+  adultContent: bool
+  faviconUrl: String?
+  metaDescription: String?
+  customRobotsTxt: String?
+  enableCustomAdsTxt: bool
+  customAdsTxt: String?
+  allowCommenting: bool
+  commentModeration: String # Never, Always, Sometimes

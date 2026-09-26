@@ -1,0 +1,10 @@
+class: BlogStat
+table: blogger_stat
+fields:
+  blogId: int
+  postId: int?
+  pageViews: int
+  uniqueVisitors: int
+  referrerSource: String
+  country: String
+  recordedDate: DateTime

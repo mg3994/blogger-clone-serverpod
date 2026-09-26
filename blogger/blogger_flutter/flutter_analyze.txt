@@ -1,0 +1,18 @@
+Resolving dependencies in `/app/blogger`...
+Downloading packages...
+  _fe_analyzer_shared 103.0.0 (108.0.0 available)
+  amazon_cognito_identity_dart_2 3.8.2 (4.0.1 available)
+  analyzer 13.3.0 (14.4.0 available)
+  flutter_lints 5.0.0 (6.0.0 available)
+  lints 5.1.1 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  package_config 2.2.0 (3.0.0 available)
+  sqlparser 0.44.5 (0.45.0 available)
+  test 1.31.1 (1.32.0 available)
+  test_api 0.7.12 (0.7.14 available)
+  test_core 0.6.18 (0.6.20 available)
+Got dependencies in `/app/blogger`!
+11 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing blogger_flutter...
+No issues found! (ran in 11.0s)

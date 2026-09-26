@@ -1,0 +1,10 @@
+class: BlogEarning
+table: blogger_earning
+fields:
+  blogId: int
+  adSensePublisherId: String?
+  autoAdsEnabled: bool
+  estimatedRevenue: double
+  impressions: int
+  clicks: int
+  updatedAt: DateTime

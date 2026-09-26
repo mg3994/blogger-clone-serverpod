@@ -1,0 +1,28 @@
+# Top level gitignore
+.dart_tool/
+.pub-cache/
+.pub/
+build/
+ephemeral/
+.packages
+
+# IDE / Editor
+.idea/
+.vscode/
+*.iml
+
+# Ignore native platform folders in flutter project
+blogger/blogger_flutter/android/
+blogger/blogger_flutter/ios/
+blogger/blogger_flutter/macos/
+blogger/blogger_flutter/windows/
+blogger/blogger_flutter/linux/
+blogger/blogger_flutter/web/
+blogger/.agents/
+blogger/.claude/
+blogger/.cursor/
+blogger/.dart_skills/
+blogger/.github/
+
+# Logs
+*.log

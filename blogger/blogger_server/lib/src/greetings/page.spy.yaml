@@ -1,0 +1,10 @@
+class: BlogPage
+table: blogger_page
+fields:
+  blogId: int
+  slug: String, indexed
+  publishedDate: DateTime
+  status: String # Draft, Published
+  schemaType: String # Mapped from JSON-LD @type
+  jsonLdPayload: String # Full raw JSON-LD schema payload
+  title: String?

@@ -1,0 +1,11 @@
+class: Comment
+table: blogger_comment
+fields:
+  blogId: int
+  postId: int
+  parentCommentId: int?
+  authorName: String
+  authorEmail: String?
+  content: String
+  createdAt: DateTime
+  isApproved: bool

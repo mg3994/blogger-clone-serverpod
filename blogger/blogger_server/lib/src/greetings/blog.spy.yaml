@@ -1,0 +1,9 @@
+class: BlogSite
+table: blogger_blog
+fields:
+  title: String
+  subdomain: String, indexed
+  customDomain: String?
+  description: String?
+  ownerId: int
+  createdAt: DateTime
