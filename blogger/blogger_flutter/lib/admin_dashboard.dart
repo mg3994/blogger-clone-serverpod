@@ -6,6 +6,7 @@ import 'theme_customizer.dart';
 import 'layout_editor.dart';
 import 'comment_manager.dart';
 import 'stats_view.dart';
+import 'blog_reader_view.dart';
 
 class BloggerAdminDashboard extends StatefulWidget {
   final Client client;
@@ -97,6 +98,19 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.open_in_new),
+            tooltip: 'View Live Blog Reader View',
+            onPressed: () {
+              if (_posts.isNotEmpty) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => BlogReaderView(client: widget.client, blogId: _blogId, postSlug: _posts.first.slug),
+                  ),
+                );
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh Dashboard',
@@ -233,6 +247,17 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
                               icon: const Icon(Icons.edit, color: Colors.orange),
                               tooltip: 'Edit Post',
                               onPressed: () => _editPostView(post),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.open_in_new, color: Colors.green),
+                              tooltip: 'View in Reader View',
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => BlogReaderView(client: widget.client, blogId: _blogId, postSlug: post.slug),
+                                  ),
+                                );
+                              },
                             ),
                             IconButton(
                               icon: const Icon(Icons.visibility, color: Colors.blue),
