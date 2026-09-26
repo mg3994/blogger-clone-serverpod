@@ -1,0 +1,8 @@
+class: FollowedBlog
+table: blogger_followed_blog
+fields:
+  userId: int
+  blogId: int
+  blogTitle: String
+  blogUrl: String
+  followedAt: DateTime

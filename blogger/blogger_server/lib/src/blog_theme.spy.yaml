@@ -1,0 +1,10 @@
+class: BlogTheme
+table: blogger_theme
+fields:
+  blogId: int
+  themeName: String # e.g. Contempo, Soho, Emporium, Notable, Essential, Custom
+  primaryColor: String
+  fontFamily: String
+  customCss: String?
+  layoutVariant: String # SidebarRight, SidebarLeft, FullWidth
+  updatedAt: DateTime

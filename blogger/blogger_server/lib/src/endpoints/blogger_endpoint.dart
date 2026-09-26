@@ -13,6 +13,16 @@ class BloggerEndpoint extends Endpoint {
     );
   }
 
+  Future<List<BlogPost>> searchPosts(Session session, int blogId, String query) async {
+    final lower = query.toLowerCase();
+    return await BlogPost.db.find(
+      session,
+      where: (t) => t.blogId.equals(blogId) & (t.title.like('%$lower%') | t.summary.like('%$lower%') | t.schemaType.like('%$lower%')),
+      orderBy: (t) => t.publishedDate,
+      orderDescending: true,
+    );
+  }
+
   Future<BlogPost?> getPostBySlug(Session session, int blogId, String slug) async {
     return await BlogPost.db.findFirstRow(
       session,
@@ -152,7 +162,7 @@ class BloggerEndpoint extends Endpoint {
     return result.isNotEmpty;
   }
 
-  // --- Settings & Blog ---
+  // --- Settings, Theme & Blog ---
   Future<BlogSettings?> getBlogSettings(Session session, int blogId) async {
     return await BlogSettings.db.findFirstRow(
       session,
@@ -168,6 +178,21 @@ class BloggerEndpoint extends Endpoint {
     }
   }
 
+  Future<BlogTheme?> getBlogTheme(Session session, int blogId) async {
+    return await BlogTheme.db.findFirstRow(
+      session,
+      where: (t) => t.blogId.equals(blogId),
+    );
+  }
+
+  Future<BlogTheme> updateBlogTheme(Session session, BlogTheme theme) async {
+    if (theme.id == null) {
+      return await BlogTheme.db.insertRow(session, theme);
+    } else {
+      return await BlogTheme.db.updateRow(session, theme);
+    }
+  }
+
   Future<BlogSite?> getBlog(Session session, int blogId) async {
     return await BlogSite.db.findById(session, blogId);
   }
@@ -177,6 +202,65 @@ class BloggerEndpoint extends Endpoint {
       return await BlogSite.db.insertRow(session, blog);
     } else {
       return await BlogSite.db.updateRow(session, blog);
+    }
+  }
+
+  // --- Reading List / Subscriptions ---
+  Future<List<FollowedBlog>> getFollowedBlogs(Session session, int userId) async {
+    return await FollowedBlog.db.find(
+      session,
+      where: (t) => t.userId.equals(userId),
+      orderBy: (t) => t.followedAt,
+      orderDescending: true,
+    );
+  }
+
+  Future<FollowedBlog> followBlog(Session session, FollowedBlog followedBlog) async {
+    return await FollowedBlog.db.insertRow(session, followedBlog);
+  }
+
+  Future<bool> unfollowBlog(Session session, int id) async {
+    var res = await FollowedBlog.db.deleteWhere(
+      session,
+      where: (t) => t.id.equals(id),
+    );
+    return res.isNotEmpty;
+  }
+
+  // --- Export & Import Backup Payload ---
+  Future<String> exportBlogData(Session session, int blogId) async {
+    final blog = await getBlog(session, blogId);
+    final posts = await getPosts(session, blogId);
+    final pages = await getPages(session, blogId);
+    final settings = await getBlogSettings(session, blogId);
+    final theme = await getBlogTheme(session, blogId);
+
+    final exportMap = {
+      'blog': blog?.toJson(),
+      'posts': posts.map((e) => e.toJson()).toList(),
+      'pages': pages.map((e) => e.toJson()).toList(),
+      'settings': settings?.toJson(),
+      'theme': theme?.toJson(),
+      'exportedAt': DateTime.now().toIso8601String(),
+    };
+
+    return jsonEncode(exportMap);
+  }
+
+  Future<bool> importBlogData(Session session, int blogId, String rawBackupJson) async {
+    try {
+      final Map<String, dynamic> data = jsonDecode(rawBackupJson);
+      if (data['posts'] is List) {
+        for (var item in data['posts']) {
+          final p = BlogPost.fromJson(Map<String, dynamic>.from(item));
+          p.id = null;
+          p.blogId = blogId;
+          await BlogPost.db.insertRow(session, p);
+        }
+      }
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 

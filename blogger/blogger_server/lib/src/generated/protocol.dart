@@ -17,6 +17,8 @@ import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _iacs;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
+import 'blog_theme.dart' as _iyyhuw3y;
+import 'followed_blog.dart' as _ivvitb3k;
 import 'greetings/blog_earning.dart' as _i0mlid7s;
 import 'greetings/blog_settings.dart' as _i3xr9bbi;
 import 'greetings/blog_stat.dart' as _ilhipm04;
@@ -24,6 +26,8 @@ import 'greetings/comment.dart' as _ixi3ig7t;
 import 'greetings/greeting.dart' as _izw8z7ou;
 import 'greetings/layout_widget.dart' as _i17h9ogf;
 import 'greetings/user_profile.dart' as _icxpg38s;
+export 'blog_theme.dart';
+export 'followed_blog.dart';
 export 'greetings/blog_earning.dart';
 export 'greetings/blog_settings.dart';
 export 'greetings/blog_stat.dart';
@@ -157,6 +161,54 @@ class Protocol extends _is.DatabaseSerializationManager {
         ),
         _isp.ColumnDefinition(
           name: 'updatedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [],
+      managed: true,
+    ),
+    _isp.TableDefinition(
+      name: 'blogger_followed_blog',
+      dartName: 'FollowedBlog',
+      schema: 'public',
+      module: 'blogger',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'userId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'blogId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'blogTitle',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'blogUrl',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'followedAt',
           columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
@@ -365,6 +417,66 @@ class Protocol extends _is.DatabaseSerializationManager {
       managed: true,
     ),
     _isp.TableDefinition(
+      name: 'blogger_theme',
+      dartName: 'BlogTheme',
+      schema: 'public',
+      module: 'blogger',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'blogId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'themeName',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'primaryColor',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'fontFamily',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'customCss',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'layoutVariant',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [],
+      managed: true,
+    ),
+    _isp.TableDefinition(
       name: 'blogger_user',
       dartName: 'UserProfile',
       schema: 'public',
@@ -450,6 +562,12 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
 
+    if (t == _iyyhuw3y.BlogTheme) {
+      return _iyyhuw3y.BlogTheme.fromJson(data) as T;
+    }
+    if (t == _ivvitb3k.FollowedBlog) {
+      return _ivvitb3k.FollowedBlog.fromJson(data) as T;
+    }
     if (t == _i0mlid7s.BlogEarning) {
       return _i0mlid7s.BlogEarning.fromJson(data) as T;
     }
@@ -470,6 +588,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _icxpg38s.UserProfile) {
       return _icxpg38s.UserProfile.fromJson(data) as T;
+    }
+    if (t == _is.getType<_iyyhuw3y.BlogTheme?>()) {
+      return (data != null ? _iyyhuw3y.BlogTheme.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_ivvitb3k.FollowedBlog?>()) {
+      return (data != null ? _ivvitb3k.FollowedBlog.fromJson(data) : null) as T;
     }
     if (t == _is.getType<_i0mlid7s.BlogEarning?>()) {
       return (data != null ? _i0mlid7s.BlogEarning.fromJson(data) : null) as T;
@@ -506,6 +630,8 @@ class Protocol extends _is.DatabaseSerializationManager {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
+      _iyyhuw3y.BlogTheme => 'BlogTheme',
+      _ivvitb3k.FollowedBlog => 'FollowedBlog',
       _i0mlid7s.BlogEarning => 'BlogEarning',
       _i3xr9bbi.BlogSettings => 'BlogSettings',
       _ilhipm04.BlogStat => 'BlogStat',
@@ -527,6 +653,10 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
 
     switch (data) {
+      case _iyyhuw3y.BlogTheme():
+        return 'BlogTheme';
+      case _ivvitb3k.FollowedBlog():
+        return 'FollowedBlog';
       case _i0mlid7s.BlogEarning():
         return 'BlogEarning';
       case _i3xr9bbi.BlogSettings():
@@ -566,6 +696,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     var dataClassName = data['className'];
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
+    }
+    if (dataClassName == 'BlogTheme') {
+      return deserialize<_iyyhuw3y.BlogTheme>(data['data']);
+    }
+    if (dataClassName == 'FollowedBlog') {
+      return deserialize<_ivvitb3k.FollowedBlog>(data['data']);
     }
     if (dataClassName == 'BlogEarning') {
       return deserialize<_i0mlid7s.BlogEarning>(data['data']);
@@ -629,6 +765,10 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
     switch (t) {
+      case _iyyhuw3y.BlogTheme:
+        return _iyyhuw3y.BlogTheme.t;
+      case _ivvitb3k.FollowedBlog:
+        return _ivvitb3k.FollowedBlog.t;
       case _i0mlid7s.BlogEarning:
         return _i0mlid7s.BlogEarning.t;
       case _i3xr9bbi.BlogSettings:
