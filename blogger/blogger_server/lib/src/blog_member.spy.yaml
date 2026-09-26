@@ -1,0 +1,9 @@
+class: BlogMember
+table: blogger_member
+fields:
+  blogId: int
+  userId: int
+  userEmail: String
+  role: String # Admin, Author, PrivateReader
+  status: String # Invited, Active
+  joinedAt: DateTime

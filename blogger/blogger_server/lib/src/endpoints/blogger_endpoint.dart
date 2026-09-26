@@ -162,6 +162,64 @@ class BloggerEndpoint extends Endpoint {
     return result.isNotEmpty;
   }
 
+  // --- Private Blog Permissions & Members ---
+  Future<List<BlogMember>> getBlogMembers(Session session, int blogId) async {
+    return await BlogMember.db.find(
+      session,
+      where: (t) => t.blogId.equals(blogId),
+      orderBy: (t) => t.joinedAt,
+      orderDescending: true,
+    );
+  }
+
+  Future<BlogMember> addBlogMember(Session session, BlogMember member) async {
+    return await BlogMember.db.insertRow(session, member);
+  }
+
+  Future<bool> removeBlogMember(Session session, int memberId) async {
+    var res = await BlogMember.db.deleteWhere(
+      session,
+      where: (t) => t.id.equals(memberId),
+    );
+    return res.isNotEmpty;
+  }
+
+  // --- Media Library ---
+  Future<List<MediaItem>> getMediaItems(Session session, int blogId) async {
+    return await MediaItem.db.find(
+      session,
+      where: (t) => t.blogId.equals(blogId),
+      orderBy: (t) => t.uploadedAt,
+      orderDescending: true,
+    );
+  }
+
+  Future<MediaItem> addMediaItem(Session session, MediaItem media) async {
+    return await MediaItem.db.insertRow(session, media);
+  }
+
+  Future<bool> deleteMediaItem(Session session, int id) async {
+    var res = await MediaItem.db.deleteWhere(
+      session,
+      where: (t) => t.id.equals(id),
+    );
+    return res.isNotEmpty;
+  }
+
+  // --- Email Subscribers ---
+  Future<List<EmailSubscriber>> getSubscribers(Session session, int blogId) async {
+    return await EmailSubscriber.db.find(
+      session,
+      where: (t) => t.blogId.equals(blogId),
+      orderBy: (t) => t.subscribedAt,
+      orderDescending: true,
+    );
+  }
+
+  Future<EmailSubscriber> addSubscriber(Session session, EmailSubscriber subscriber) async {
+    return await EmailSubscriber.db.insertRow(session, subscriber);
+  }
+
   // --- Settings, Theme & Blog ---
   Future<BlogSettings?> getBlogSettings(Session session, int blogId) async {
     return await BlogSettings.db.findFirstRow(

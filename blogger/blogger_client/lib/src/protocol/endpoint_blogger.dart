@@ -82,6 +82,47 @@ class EndpointBlogger {
     return result.map((e) => LayoutWidget.fromJson(Map<String, dynamic>.from(e))).toList();
   }
 
+  // --- Private Blog Permissions ---
+  Future<List<BlogMember>> getBlogMembers(int blogId) async {
+    final List result = await caller.callServerEndpoint<List>('blogger', 'getBlogMembers', {'blogId': blogId});
+    return result.map((e) => BlogMember.fromJson(Map<String, dynamic>.from(e))).toList();
+  }
+
+  Future<BlogMember> addBlogMember(BlogMember member) async {
+    final res = await caller.callServerEndpoint<Map>('blogger', 'addBlogMember', {'member': member.toJson()});
+    return BlogMember.fromJson(Map<String, dynamic>.from(res));
+  }
+
+  Future<bool> removeBlogMember(int memberId) async {
+    return await caller.callServerEndpoint<bool>('blogger', 'removeBlogMember', {'memberId': memberId});
+  }
+
+  // --- Media Library ---
+  Future<List<MediaItem>> getMediaItems(int blogId) async {
+    final List result = await caller.callServerEndpoint<List>('blogger', 'getMediaItems', {'blogId': blogId});
+    return result.map((e) => MediaItem.fromJson(Map<String, dynamic>.from(e))).toList();
+  }
+
+  Future<MediaItem> addMediaItem(MediaItem media) async {
+    final res = await caller.callServerEndpoint<Map>('blogger', 'addMediaItem', {'media': media.toJson()});
+    return MediaItem.fromJson(Map<String, dynamic>.from(res));
+  }
+
+  Future<bool> deleteMediaItem(int id) async {
+    return await caller.callServerEndpoint<bool>('blogger', 'deleteMediaItem', {'id': id});
+  }
+
+  // --- Email Subscribers ---
+  Future<List<EmailSubscriber>> getSubscribers(int blogId) async {
+    final List result = await caller.callServerEndpoint<List>('blogger', 'getSubscribers', {'blogId': blogId});
+    return result.map((e) => EmailSubscriber.fromJson(Map<String, dynamic>.from(e))).toList();
+  }
+
+  Future<EmailSubscriber> addSubscriber(EmailSubscriber subscriber) async {
+    final res = await caller.callServerEndpoint<Map>('blogger', 'addSubscriber', {'subscriber': subscriber.toJson()});
+    return EmailSubscriber.fromJson(Map<String, dynamic>.from(res));
+  }
+
   Future<BlogSettings?> getBlogSettings(int blogId) async {
     final res = await caller.callServerEndpoint<Map?>('blogger', 'getBlogSettings', {'blogId': blogId});
     return res != null ? BlogSettings.fromJson(Map<String, dynamic>.from(res)) : null;

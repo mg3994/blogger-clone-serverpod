@@ -1,0 +1,9 @@
+class: MediaItem
+table: blogger_media
+fields:
+  blogId: int
+  filename: String
+  url: String
+  mimeType: String
+  sizeInBytes: int
+  uploadedAt: DateTime

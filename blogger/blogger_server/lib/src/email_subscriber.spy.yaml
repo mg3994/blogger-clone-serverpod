@@ -1,0 +1,7 @@
+class: EmailSubscriber
+table: blogger_subscriber
+fields:
+  blogId: int
+  email: String
+  isConfirmed: bool
+  subscribedAt: DateTime

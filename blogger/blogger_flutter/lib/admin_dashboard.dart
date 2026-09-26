@@ -23,6 +23,9 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
   BlogSettings? _settings;
   BlogTheme? _theme;
   List<FollowedBlog> _followedBlogs = [];
+  List<BlogMember> _members = [];
+  List<MediaItem> _mediaItems = [];
+  List<EmailSubscriber> _subscribers = [];
 
   bool _isLoading = false;
   final TextEditingController _searchController = TextEditingController();
@@ -44,6 +47,9 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
       final settings = await widget.client.blogger.getBlogSettings(_blogId);
       final theme = await widget.client.blogger.getBlogTheme(_blogId);
       final followed = await widget.client.blogger.getFollowedBlogs(1);
+      final members = await widget.client.blogger.getBlogMembers(_blogId);
+      final media = await widget.client.blogger.getMediaItems(_blogId);
+      final subscribers = await widget.client.blogger.getSubscribers(_blogId);
 
       if (mounted) {
         setState(() {
@@ -55,6 +61,9 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
           _settings = settings;
           _theme = theme;
           _followedBlogs = followed;
+          _members = members;
+          _mediaItems = media;
+          _subscribers = subscribers;
           _isLoading = false;
         });
       }
@@ -114,6 +123,9 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
               NavigationRailDestination(icon: Icon(Icons.comment_outlined), selectedIcon: Icon(Icons.comment), label: Text('Comments')),
               NavigationRailDestination(icon: Icon(Icons.attach_money_outlined), selectedIcon: Icon(Icons.attach_money), label: Text('Earnings')),
               NavigationRailDestination(icon: Icon(Icons.pages_outlined), selectedIcon: Icon(Icons.pages), label: Text('Pages')),
+              NavigationRailDestination(icon: Icon(Icons.perm_identity_outlined), selectedIcon: Icon(Icons.perm_identity), label: Text('Permissions')),
+              NavigationRailDestination(icon: Icon(Icons.perm_media_outlined), selectedIcon: Icon(Icons.perm_media), label: Text('Media')),
+              NavigationRailDestination(icon: Icon(Icons.mark_email_read_outlined), selectedIcon: Icon(Icons.mark_email_read), label: Text('Subscribers')),
               NavigationRailDestination(icon: Icon(Icons.palette_outlined), selectedIcon: Icon(Icons.palette), label: Text('Theme')),
               NavigationRailDestination(icon: Icon(Icons.dashboard_customize_outlined), selectedIcon: Icon(Icons.dashboard_customize), label: Text('Layout')),
               NavigationRailDestination(icon: Icon(Icons.chrome_reader_mode_outlined), selectedIcon: Icon(Icons.chrome_reader_mode), label: Text('Reading List')),
@@ -132,6 +144,9 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
                       _buildCommentsTab(),
                       _buildEarningsTab(),
                       _buildPagesTab(),
+                      _buildPermissionsTab(),
+                      _buildMediaTab(),
+                      _buildSubscribersTab(),
                       _buildThemeTab(),
                       _buildLayoutTab(),
                       _buildReadingListTab(),
@@ -427,7 +442,134 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 6. Theme Tab ---
+  // --- 6. Permissions / Private Blog Tab ---
+  Widget _buildPermissionsTab() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Blog Authors & Private Readers', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              ElevatedButton.icon(
+                onPressed: _showAddMemberDialog,
+                icon: const Icon(Icons.person_add),
+                label: const Text('Invite Member'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: _members.isEmpty
+                ? const Center(child: Text('No invited authors or private readers.'))
+                : ListView.builder(
+                    itemCount: _members.length,
+                    itemBuilder: (context, index) {
+                      final m = _members[index];
+                      return Card(
+                        child: ListTile(
+                          leading: const Icon(Icons.security, color: Colors.purple),
+                          title: Text(m.userEmail, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text('Role: ${m.role} | Status: ${m.status}'),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              if (m.id != null) {
+                                await widget.client.blogger.removeBlogMember(m.id!);
+                                _loadDashboardData();
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 7. Media Tab ---
+  Widget _buildMediaTab() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Media Library', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              ElevatedButton.icon(
+                onPressed: _showUploadMediaDialog,
+                icon: const Icon(Icons.cloud_upload),
+                label: const Text('Upload Media'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: _mediaItems.isEmpty
+                ? const Center(child: Text('No media items uploaded.'))
+                : GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 12, mainAxisSpacing: 12),
+                    itemCount: _mediaItems.length,
+                    itemBuilder: (context, index) {
+                      final media = _mediaItems[index];
+                      return Card(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.image, size: 48, color: Colors.blue),
+                            const SizedBox(height: 8),
+                            Text(media.filename, style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                            Text('${(media.sizeInBytes / 1024).toStringAsFixed(1)} KB', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 8. Subscribers Tab ---
+  Widget _buildSubscribersTab() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Email Follower Subscribers', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Expanded(
+            child: _subscribers.isEmpty
+                ? const Center(child: Text('No email subscribers yet.'))
+                : ListView.builder(
+                    itemCount: _subscribers.length,
+                    itemBuilder: (context, index) {
+                      final sub = _subscribers[index];
+                      return Card(
+                        child: ListTile(
+                          leading: const Icon(Icons.mark_email_read, color: Colors.teal),
+                          title: Text(sub.email, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text('Confirmed: ${sub.isConfirmed} | Subscribed: ${sub.subscribedAt.toIso8601String().split('T').first}'),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 9. Theme Tab ---
   Widget _buildThemeTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -458,7 +600,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 7. Layout Tab ---
+  // --- 10. Layout Tab ---
   Widget _buildLayoutTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -512,7 +654,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 8. Reading List Tab ---
+  // --- 11. Reading List Tab ---
   Widget _buildReadingListTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -543,7 +685,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 9. Settings Tab ---
+  // --- 12. Settings Tab ---
   Widget _buildSettingsTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -582,6 +724,76 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
           appBar: AppBar(title: Text('Universal JSON-LD Render: ${post.title}')),
           body: UniversalJsonLdRenderer(jsonLdPayload: post.jsonLdPayload),
         ),
+      ),
+    );
+  }
+
+  void _showAddMemberDialog() {
+    final emailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Invite Author or Private Reader'),
+        content: TextField(
+          controller: emailController,
+          decoration: const InputDecoration(labelText: 'Email Address', border: OutlineInputBorder()),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (emailController.text.isNotEmpty) {
+                await widget.client.blogger.addBlogMember(
+                  BlogMember(
+                    blogId: _blogId,
+                    userId: 2,
+                    userEmail: emailController.text,
+                    role: 'PrivateReader',
+                    status: 'Invited',
+                    joinedAt: DateTime.now(),
+                  ),
+                );
+                if (mounted && dialogContext.mounted) {
+                  Navigator.of(dialogContext).pop();
+                  _loadDashboardData();
+                }
+              }
+            },
+            child: const Text('Send Invite'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showUploadMediaDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Upload Media'),
+        content: const Text('Simulating file picker upload...'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              await widget.client.blogger.addMediaItem(
+                MediaItem(
+                  blogId: _blogId,
+                  filename: 'cover-image.png',
+                  url: 'https://via.placeholder.com/600',
+                  mimeType: 'image/png',
+                  sizeInBytes: 102400,
+                  uploadedAt: DateTime.now(),
+                ),
+              );
+              if (mounted && dialogContext.mounted) {
+                Navigator.of(dialogContext).pop();
+                _loadDashboardData();
+              }
+            },
+            child: const Text('Upload Sample Image'),
+          ),
+        ],
       ),
     );
   }
