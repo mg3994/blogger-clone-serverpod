@@ -48,6 +48,26 @@ class EndpointBlogger {
     return await caller.callServerEndpoint<bool>('blogger', 'deletePage', {'id': id});
   }
 
+  // --- RSS / Atom Feed ---
+  Future<String> generateAtomFeedXml(int blogId) async {
+    return await caller.callServerEndpoint<String>('blogger', 'generateAtomFeedXml', {'blogId': blogId});
+  }
+
+  // --- Custom Redirects ---
+  Future<List<CustomRedirect>> getCustomRedirects(int blogId) async {
+    final List result = await caller.callServerEndpoint<List>('blogger', 'getCustomRedirects', {'blogId': blogId});
+    return result.map((e) => CustomRedirect.fromJson(Map<String, dynamic>.from(e))).toList();
+  }
+
+  Future<CustomRedirect> addCustomRedirect(CustomRedirect redirect) async {
+    final res = await caller.callServerEndpoint<Map>('blogger', 'addCustomRedirect', {'redirect': redirect.toJson()});
+    return CustomRedirect.fromJson(Map<String, dynamic>.from(res));
+  }
+
+  Future<bool> deleteCustomRedirect(int id) async {
+    return await caller.callServerEndpoint<bool>('blogger', 'deleteCustomRedirect', {'id': id});
+  }
+
   Future<List<Comment>> getComments(int blogId, {int? postId}) async {
     final List result = await caller.callServerEndpoint<List>('blogger', 'getComments', {'blogId': blogId, 'postId': postId});
     return result.map((e) => Comment.fromJson(Map<String, dynamic>.from(e))).toList();
@@ -82,7 +102,6 @@ class EndpointBlogger {
     return result.map((e) => LayoutWidget.fromJson(Map<String, dynamic>.from(e))).toList();
   }
 
-  // --- Private Blog Permissions ---
   Future<List<BlogMember>> getBlogMembers(int blogId) async {
     final List result = await caller.callServerEndpoint<List>('blogger', 'getBlogMembers', {'blogId': blogId});
     return result.map((e) => BlogMember.fromJson(Map<String, dynamic>.from(e))).toList();
@@ -97,7 +116,6 @@ class EndpointBlogger {
     return await caller.callServerEndpoint<bool>('blogger', 'removeBlogMember', {'memberId': memberId});
   }
 
-  // --- Media Library ---
   Future<List<MediaItem>> getMediaItems(int blogId) async {
     final List result = await caller.callServerEndpoint<List>('blogger', 'getMediaItems', {'blogId': blogId});
     return result.map((e) => MediaItem.fromJson(Map<String, dynamic>.from(e))).toList();
@@ -112,7 +130,6 @@ class EndpointBlogger {
     return await caller.callServerEndpoint<bool>('blogger', 'deleteMediaItem', {'id': id});
   }
 
-  // --- Email Subscribers ---
   Future<List<EmailSubscriber>> getSubscribers(int blogId) async {
     final List result = await caller.callServerEndpoint<List>('blogger', 'getSubscribers', {'blogId': blogId});
     return result.map((e) => EmailSubscriber.fromJson(Map<String, dynamic>.from(e))).toList();

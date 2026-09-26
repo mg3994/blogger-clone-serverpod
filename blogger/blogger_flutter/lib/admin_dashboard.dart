@@ -26,6 +26,8 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
   List<BlogMember> _members = [];
   List<MediaItem> _mediaItems = [];
   List<EmailSubscriber> _subscribers = [];
+  List<CustomRedirect> _redirects = [];
+  String _atomXmlFeed = '';
 
   bool _isLoading = false;
   final TextEditingController _searchController = TextEditingController();
@@ -50,6 +52,8 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
       final members = await widget.client.blogger.getBlogMembers(_blogId);
       final media = await widget.client.blogger.getMediaItems(_blogId);
       final subscribers = await widget.client.blogger.getSubscribers(_blogId);
+      final redirects = await widget.client.blogger.getCustomRedirects(_blogId);
+      final atomXml = await widget.client.blogger.generateAtomFeedXml(_blogId);
 
       if (mounted) {
         setState(() {
@@ -64,6 +68,8 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
           _members = members;
           _mediaItems = media;
           _subscribers = subscribers;
+          _redirects = redirects;
+          _atomXmlFeed = atomXml;
           _isLoading = false;
         });
       }
@@ -123,6 +129,8 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
               NavigationRailDestination(icon: Icon(Icons.comment_outlined), selectedIcon: Icon(Icons.comment), label: Text('Comments')),
               NavigationRailDestination(icon: Icon(Icons.attach_money_outlined), selectedIcon: Icon(Icons.attach_money), label: Text('Earnings')),
               NavigationRailDestination(icon: Icon(Icons.pages_outlined), selectedIcon: Icon(Icons.pages), label: Text('Pages')),
+              NavigationRailDestination(icon: Icon(Icons.alt_route_outlined), selectedIcon: Icon(Icons.alt_route), label: Text('Redirects')),
+              NavigationRailDestination(icon: Icon(Icons.rss_feed_outlined), selectedIcon: Icon(Icons.rss_feed), label: Text('Atom/RSS')),
               NavigationRailDestination(icon: Icon(Icons.perm_identity_outlined), selectedIcon: Icon(Icons.perm_identity), label: Text('Permissions')),
               NavigationRailDestination(icon: Icon(Icons.perm_media_outlined), selectedIcon: Icon(Icons.perm_media), label: Text('Media')),
               NavigationRailDestination(icon: Icon(Icons.mark_email_read_outlined), selectedIcon: Icon(Icons.mark_email_read), label: Text('Subscribers')),
@@ -144,6 +152,8 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
                       _buildCommentsTab(),
                       _buildEarningsTab(),
                       _buildPagesTab(),
+                      _buildRedirectsTab(),
+                      _buildFeedTab(),
                       _buildPermissionsTab(),
                       _buildMediaTab(),
                       _buildSubscribersTab(),
@@ -442,7 +452,84 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 6. Permissions / Private Blog Tab ---
+  // --- 6. Custom Redirects Tab ---
+  Widget _buildRedirectsTab() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Custom URL Redirects (301 / 302)', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              ElevatedButton.icon(
+                onPressed: _showAddRedirectDialog,
+                icon: const Icon(Icons.add),
+                label: const Text('Add Redirect'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: _redirects.isEmpty
+                ? const Center(child: Text('No custom redirects configured.'))
+                : ListView.builder(
+                    itemCount: _redirects.length,
+                    itemBuilder: (context, index) {
+                      final r = _redirects[index];
+                      return Card(
+                        child: ListTile(
+                          leading: const Icon(Icons.alt_route, color: Colors.blue),
+                          title: Text('${r.fromPath} ➔ ${r.toPath}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text('Type: ${r.isPermanent ? "301 Permanent" : "302 Temporary"}'),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              if (r.id != null) {
+                                await widget.client.blogger.deleteCustomRedirect(r.id!);
+                                _loadDashboardData();
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 7. Atom/RSS Feed Tab ---
+  Widget _buildFeedTab() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Live Atom / RSS XML Feed Output', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Colors.grey.shade900, borderRadius: BorderRadius.circular(8)),
+              child: SingleChildScrollView(
+                child: SelectableText(
+                  _atomXmlFeed.isEmpty ? '<feed>Generating feed...</feed>' : _atomXmlFeed,
+                  style: const TextStyle(fontFamily: 'monospace', color: Colors.lightGreenAccent, fontSize: 12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 8. Permissions / Private Blog Tab ---
   Widget _buildPermissionsTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -492,7 +579,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 7. Media Tab ---
+  // --- 9. Media Tab ---
   Widget _buildMediaTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -538,7 +625,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 8. Subscribers Tab ---
+  // --- 10. Subscribers Tab ---
   Widget _buildSubscribersTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -569,7 +656,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 9. Theme Tab ---
+  // --- 11. Theme Tab ---
   Widget _buildThemeTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -600,7 +687,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 10. Layout Tab ---
+  // --- 12. Layout Tab ---
   Widget _buildLayoutTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -654,7 +741,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 11. Reading List Tab ---
+  // --- 13. Reading List Tab ---
   Widget _buildReadingListTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -685,7 +772,7 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
     );
   }
 
-  // --- 12. Settings Tab ---
+  // --- 14. Settings Tab ---
   Widget _buildSettingsTab() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -724,6 +811,47 @@ class _BloggerAdminDashboardState extends State<BloggerAdminDashboard> {
           appBar: AppBar(title: Text('Universal JSON-LD Render: ${post.title}')),
           body: UniversalJsonLdRenderer(jsonLdPayload: post.jsonLdPayload),
         ),
+      ),
+    );
+  }
+
+  void _showAddRedirectDialog() {
+    final fromController = TextEditingController();
+    final toController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Add Custom Redirect'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: fromController, decoration: const InputDecoration(labelText: 'From Path (e.g. /old-path)')),
+            TextField(controller: toController, decoration: const InputDecoration(labelText: 'To Path (e.g. /new-path)')),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (fromController.text.isNotEmpty && toController.text.isNotEmpty) {
+                await widget.client.blogger.addCustomRedirect(
+                  CustomRedirect(
+                    blogId: _blogId,
+                    fromPath: fromController.text,
+                    toPath: toController.text,
+                    isPermanent: true,
+                    createdAt: DateTime.now(),
+                  ),
+                );
+                if (mounted && dialogContext.mounted) {
+                  Navigator.of(dialogContext).pop();
+                  _loadDashboardData();
+                }
+              }
+            },
+            child: const Text('Save Redirect'),
+          ),
+        ],
       ),
     );
   }

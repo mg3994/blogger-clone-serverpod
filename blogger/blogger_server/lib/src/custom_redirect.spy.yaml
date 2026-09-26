@@ -1,0 +1,8 @@
+class: CustomRedirect
+table: blogger_custom_redirect
+fields:
+  blogId: int
+  fromPath: String
+  toPath: String
+  isPermanent: bool # 301 vs 302
+  createdAt: DateTime

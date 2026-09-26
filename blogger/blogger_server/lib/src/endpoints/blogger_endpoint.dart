@@ -78,6 +78,60 @@ class BloggerEndpoint extends Endpoint {
     return result.isNotEmpty;
   }
 
+  // --- RSS / Atom Feed Generator ---
+  Future<String> generateAtomFeedXml(Session session, int blogId) async {
+    final blog = await getBlog(session, blogId);
+    final posts = await getPosts(session, blogId);
+    final blogTitle = blog?.title ?? 'Blogger Site';
+    final blogUrl = blog?.customDomain ?? 'https://${blog?.subdomain ?? "blog"}.blogger.com';
+
+    final buffer = StringBuffer();
+    buffer.writeln('<?xml version="1.0" encoding="utf-8"?>');
+    buffer.writeln('<feed xmlns="http://www.w3.org/2005/Atom">');
+    buffer.writeln('  <title>${_xmlEscape(blogTitle)}</title>');
+    buffer.writeln('  <link href="$blogUrl/feeds/posts/default" rel="self"/>');
+    buffer.writeln('  <link href="$blogUrl/"/>');
+    buffer.writeln('  <updated>${DateTime.now().toIso8601String()}</updated>');
+
+    for (var post in posts) {
+      buffer.writeln('  <entry>');
+      buffer.writeln('    <title>${_xmlEscape(post.title ?? post.slug)}</title>');
+      buffer.writeln('    <link href="$blogUrl/${post.slug}"/>');
+      buffer.writeln('    <id>$blogUrl/${post.slug}</id>');
+      buffer.writeln('    <published>${post.publishedDate.toIso8601String()}</published>');
+      buffer.writeln('    <summary>${_xmlEscape(post.summary ?? "")}</summary>');
+      buffer.writeln('  </entry>');
+    }
+    buffer.writeln('</feed>');
+    return buffer.toString();
+  }
+
+  String _xmlEscape(String input) {
+    return input.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
+  }
+
+  // --- Custom Redirects ---
+  Future<List<CustomRedirect>> getCustomRedirects(Session session, int blogId) async {
+    return await CustomRedirect.db.find(
+      session,
+      where: (t) => t.blogId.equals(blogId),
+      orderBy: (t) => t.createdAt,
+      orderDescending: true,
+    );
+  }
+
+  Future<CustomRedirect> addCustomRedirect(Session session, CustomRedirect redirect) async {
+    return await CustomRedirect.db.insertRow(session, redirect);
+  }
+
+  Future<bool> deleteCustomRedirect(Session session, int id) async {
+    var res = await CustomRedirect.db.deleteWhere(
+      session,
+      where: (t) => t.id.equals(id),
+    );
+    return res.isNotEmpty;
+  }
+
   // --- Comments ---
   Future<List<Comment>> getComments(Session session, int blogId, {int? postId}) async {
     return await Comment.db.find(

@@ -19,6 +19,7 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
 import 'blog_member.dart' as _izav6usd;
 import 'blog_theme.dart' as _iyyhuw3y;
+import 'custom_redirect.dart' as _i5u25blx;
 import 'email_subscriber.dart' as _i2wrmvqb;
 import 'followed_blog.dart' as _ivvitb3k;
 import 'greetings/blog_earning.dart' as _i0mlid7s;
@@ -31,6 +32,7 @@ import 'greetings/user_profile.dart' as _icxpg38s;
 import 'media_item.dart' as _i1519v01;
 export 'blog_member.dart';
 export 'blog_theme.dart';
+export 'custom_redirect.dart';
 export 'email_subscriber.dart';
 export 'followed_blog.dart';
 export 'greetings/blog_earning.dart';
@@ -110,6 +112,54 @@ class Protocol extends _is.DatabaseSerializationManager {
           columnType: _isp.ColumnType.boolean,
           isNullable: false,
           dartType: 'bool',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [],
+      managed: true,
+    ),
+    _isp.TableDefinition(
+      name: 'blogger_custom_redirect',
+      dartName: 'CustomRedirect',
+      schema: 'public',
+      module: 'blogger',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'blogId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'fromPath',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'toPath',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'isPermanent',
+          columnType: _isp.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _isp.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
         ),
       ],
       foreignKeys: [],
@@ -724,6 +774,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _iyyhuw3y.BlogTheme) {
       return _iyyhuw3y.BlogTheme.fromJson(data) as T;
     }
+    if (t == _i5u25blx.CustomRedirect) {
+      return _i5u25blx.CustomRedirect.fromJson(data) as T;
+    }
     if (t == _i2wrmvqb.EmailSubscriber) {
       return _i2wrmvqb.EmailSubscriber.fromJson(data) as T;
     }
@@ -759,6 +812,10 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_iyyhuw3y.BlogTheme?>()) {
       return (data != null ? _iyyhuw3y.BlogTheme.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i5u25blx.CustomRedirect?>()) {
+      return (data != null ? _i5u25blx.CustomRedirect.fromJson(data) : null)
+          as T;
     }
     if (t == _is.getType<_i2wrmvqb.EmailSubscriber?>()) {
       return (data != null ? _i2wrmvqb.EmailSubscriber.fromJson(data) : null)
@@ -807,6 +864,7 @@ class Protocol extends _is.DatabaseSerializationManager {
     return switch (type) {
       _izav6usd.BlogMember => 'BlogMember',
       _iyyhuw3y.BlogTheme => 'BlogTheme',
+      _i5u25blx.CustomRedirect => 'CustomRedirect',
       _i2wrmvqb.EmailSubscriber => 'EmailSubscriber',
       _ivvitb3k.FollowedBlog => 'FollowedBlog',
       _i0mlid7s.BlogEarning => 'BlogEarning',
@@ -835,6 +893,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'BlogMember';
       case _iyyhuw3y.BlogTheme():
         return 'BlogTheme';
+      case _i5u25blx.CustomRedirect():
+        return 'CustomRedirect';
       case _i2wrmvqb.EmailSubscriber():
         return 'EmailSubscriber';
       case _ivvitb3k.FollowedBlog():
@@ -886,6 +946,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'BlogTheme') {
       return deserialize<_iyyhuw3y.BlogTheme>(data['data']);
+    }
+    if (dataClassName == 'CustomRedirect') {
+      return deserialize<_i5u25blx.CustomRedirect>(data['data']);
     }
     if (dataClassName == 'EmailSubscriber') {
       return deserialize<_i2wrmvqb.EmailSubscriber>(data['data']);
@@ -962,6 +1025,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return _izav6usd.BlogMember.t;
       case _iyyhuw3y.BlogTheme:
         return _iyyhuw3y.BlogTheme.t;
+      case _i5u25blx.CustomRedirect:
+        return _i5u25blx.CustomRedirect.t;
       case _i2wrmvqb.EmailSubscriber:
         return _i2wrmvqb.EmailSubscriber.t;
       case _ivvitb3k.FollowedBlog:

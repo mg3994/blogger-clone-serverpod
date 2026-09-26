@@ -1,9 +1,11 @@
 import 'blogger_client_protocol.dart';
 import 'advanced_protocol.dart';
 import 'private_and_media_protocol.dart';
+import 'redirect_protocol.dart';
 export 'blogger_client_protocol.dart';
 export 'advanced_protocol.dart';
 export 'private_and_media_protocol.dart';
+export 'redirect_protocol.dart';
 export 'blog_earning.dart';
 export 'blog_settings.dart';
 export 'blog_stat.dart';
