@@ -4,6 +4,37 @@ import '../generated/protocol.dart';
 
 /// Serverpod Endpoint porting Google Blogger API v3 REST specification
 class BloggerV3Endpoint extends Endpoint {
+  // --- Auth Verification Helpers ---
+  bool _verifyAccess(String? apiKey, String? authToken) {
+    if (apiKey != null && apiKey.isNotEmpty) return true;
+    if (authToken != null && authToken.isNotEmpty) return true;
+    return true; // Permissive for local dev / sandbox testing
+  }
+
+  // --- Users Resource (Blogger v3 API) ---
+
+  /// GET /blogger/v3/users/{userId}
+  Future<Map<String, dynamic>> usersGet(
+    Session session, {
+    required String userId,
+    String? apiKey,
+    String? authToken,
+  }) async {
+    final uId = int.tryParse(userId) ?? 1;
+    final user = await UserProfile.db.findById(session, uId);
+
+    return {
+      'kind': 'blogger#user',
+      'id': '${user?.id ?? 1}',
+      'displayName': user?.name ?? 'Blogger Admin',
+      'about': user?.bio ?? 'Blogger Author Profile',
+      'url': 'https://www.blogger.com/profile/${user?.id ?? 1}',
+      'blogs': {
+        'selfLink': 'https://www.googleapis.com/blogger/v3/users/${user?.id ?? 1}/blogs'
+      }
+    };
+  }
+
   // --- Blogs Resource (Blogger v3 API) ---
 
   /// GET /blogger/v3/blogs/{blogId}
@@ -59,7 +90,73 @@ class BloggerV3Endpoint extends Endpoint {
     return blogsGet(session, blogId: '${blog.id}', apiKey: apiKey);
   }
 
+  // --- Pages Resource (Blogger v3 API) ---
+
+  /// GET /blogger/v3/blogs/{blogId}/pages/{pageId}
+  Future<Map<String, dynamic>> pagesGet(
+    Session session, {
+    required String blogId,
+    required String pageId,
+    String? apiKey,
+    String? authToken,
+  }) async {
+    final pgId = int.tryParse(pageId);
+    if (pgId == null) {
+      return {'kind': 'blogger#page', 'error': {'code': 400, 'message': 'Invalid Page ID'}};
+    }
+    final page = await BlogPage.db.findById(session, pgId);
+    if (page == null) {
+      return {'kind': 'blogger#page', 'error': {'code': 404, 'message': 'Page not found'}};
+    }
+
+    return {
+      'kind': 'blogger#page',
+      'id': '${page.id}',
+      'blog': {'id': '${page.blogId}'},
+      'published': page.publishedDate.toIso8601String(),
+      'updated': page.publishedDate.toIso8601String(),
+      'url': '/${page.slug}',
+      'title': page.title ?? page.slug,
+      'content': page.jsonLdPayload,
+      'author': {'displayName': 'Blogger Author'},
+    };
+  }
+
   // --- Posts Resource (Blogger v3 API) ---
+
+  /// GET /blogger/v3/blogs/{blogId}/posts/search?q={q}
+  Future<Map<String, dynamic>> postsSearch(
+    Session session, {
+    required String blogId,
+    required String q,
+    String? apiKey,
+    String? authToken,
+  }) async {
+    final id = int.tryParse(blogId) ?? 1;
+    final lower = q.toLowerCase();
+    final posts = await BlogPost.db.find(
+      session,
+      where: (t) => t.blogId.equals(id) & (t.title.like('%$lower%') | t.summary.like('%$lower%')),
+      orderBy: (t) => t.publishedDate,
+      orderDescending: true,
+    );
+
+    final items = posts.map((p) => {
+      'kind': 'blogger#post',
+      'id': '${p.id}',
+      'blog': {'id': '$id'},
+      'published': p.publishedDate.toIso8601String(),
+      'updated': p.publishedDate.toIso8601String(),
+      'url': '/${p.slug}',
+      'title': p.title ?? p.slug,
+      'content': p.jsonLdPayload,
+    }).toList();
+
+    return {
+      'kind': 'blogger#postList',
+      'items': items,
+    };
+  }
 
   /// GET /blogger/v3/blogs/{blogId}/posts
   Future<Map<String, dynamic>> postsList(

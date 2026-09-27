@@ -4,6 +4,11 @@ class EndpointBloggerV3 {
   final _isc.EndpointCaller caller;
   EndpointBloggerV3(this.caller);
 
+  Future<Map<String, dynamic>> usersGet({required String userId, String? apiKey, String? authToken}) async {
+    final res = await caller.callServerEndpoint<Map>('bloggerV3', 'usersGet', {'userId': userId, 'apiKey': apiKey, 'authToken': authToken});
+    return Map<String, dynamic>.from(res);
+  }
+
   Future<Map<String, dynamic>> blogsGet({required String blogId, String? apiKey, String? authToken}) async {
     final res = await caller.callServerEndpoint<Map>('bloggerV3', 'blogsGet', {'blogId': blogId, 'apiKey': apiKey, 'authToken': authToken});
     return Map<String, dynamic>.from(res);
@@ -11,6 +16,16 @@ class EndpointBloggerV3 {
 
   Future<Map<String, dynamic>> blogsGetByUrl({required String url, String? apiKey}) async {
     final res = await caller.callServerEndpoint<Map>('bloggerV3', 'blogsGetByUrl', {'url': url, 'apiKey': apiKey});
+    return Map<String, dynamic>.from(res);
+  }
+
+  Future<Map<String, dynamic>> pagesGet({required String blogId, required String pageId, String? apiKey, String? authToken}) async {
+    final res = await caller.callServerEndpoint<Map>('bloggerV3', 'pagesGet', {'blogId': blogId, 'pageId': pageId, 'apiKey': apiKey, 'authToken': authToken});
+    return Map<String, dynamic>.from(res);
+  }
+
+  Future<Map<String, dynamic>> postsSearch({required String blogId, required String q, String? apiKey, String? authToken}) async {
+    final res = await caller.callServerEndpoint<Map>('bloggerV3', 'postsSearch', {'blogId': blogId, 'q': q, 'apiKey': apiKey, 'authToken': authToken});
     return Map<String, dynamic>.from(res);
   }
 
