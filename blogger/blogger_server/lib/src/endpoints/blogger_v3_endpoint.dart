@@ -4,11 +4,16 @@ import '../generated/protocol.dart';
 
 /// Serverpod Endpoint porting Google Blogger API v3 REST specification
 class BloggerV3Endpoint extends Endpoint {
-  // --- Auth Verification Helpers ---
-  bool _verifyAccess(String? apiKey, String? authToken) {
-    if (apiKey != null && apiKey.isNotEmpty) return true;
-    if (authToken != null && authToken.isNotEmpty) return true;
-    return true; // Permissive for local dev / sandbox testing
+  // --- Auth Verification & Private Blog Guard Helpers ---
+  Future<bool> _hasBlogReadAccess(Session session, int blogId, String? userEmail) async {
+    final settings = await BlogSettings.db.findFirstRow(session, where: (t) => t.blogId.equals(blogId));
+    // Check if blog requires membership
+    final members = await BlogMember.db.find(session, where: (t) => t.blogId.equals(blogId));
+    if (members.isEmpty) return true; // Public blog
+
+    if (userEmail == null || userEmail.isEmpty) return false;
+    final match = members.firstWhere((m) => m.userEmail == userEmail, orElse: () => BlogMember(blogId: blogId, userId: 0, userEmail: '', role: 'None', status: 'None', joinedAt: DateTime.now()));
+    return match.role != 'None';
   }
 
   // --- Users Resource (Blogger v3 API) ---
@@ -32,6 +37,79 @@ class BloggerV3Endpoint extends Endpoint {
       'blogs': {
         'selfLink': 'https://www.googleapis.com/blogger/v3/users/${user?.id ?? 1}/blogs'
       }
+    };
+  }
+
+  // --- BlogUserInfos Resource (Blogger v3 API for Private Blog Reader Permissions) ---
+
+  /// GET /blogger/v3/users/{userId}/blogs/{blogId}
+  Future<Map<String, dynamic>> blogUserInfosGet(
+    Session session, {
+    required String userId,
+    required String blogId,
+    String? apiKey,
+    String? authToken,
+  }) async {
+    final uId = int.tryParse(userId) ?? 1;
+    final bId = int.tryParse(blogId) ?? 1;
+
+    final user = await UserProfile.db.findById(session, uId);
+    final member = await BlogMember.db.findFirstRow(
+      session,
+      where: (t) => t.blogId.equals(bId) & (t.userId.equals(uId) | t.userEmail.equals(user?.email ?? '')),
+    );
+
+    final blogData = await blogsGet(session, blogId: blogId, apiKey: apiKey, authToken: authToken);
+
+    return {
+      'kind': 'blogger#blogUserInfo',
+      'blog': blogData,
+      'blog_user_info': {
+        'kind': 'blogger#blogPerUserInfo',
+        'blogId': blogId,
+        'userId': userId,
+        'role': member?.role ?? 'ADMIN',
+        'hasAdminAccess': member?.role == 'ADMIN' || member == null,
+      }
+    };
+  }
+
+  // --- PostUserInfos Resource (Blogger v3 API) ---
+
+  /// GET /blogger/v3/users/{userId}/blogs/{blogId}/posts/{postId}
+  Future<Map<String, dynamic>> postUserInfosGet(
+    Session session, {
+    required String userId,
+    required String blogId,
+    required String postId,
+    String? apiKey,
+    String? authToken,
+  }) async {
+    final postData = await postsGet(session, blogId: blogId, postId: postId, apiKey: apiKey, authToken: authToken);
+    return {
+      'kind': 'blogger#postUserInfo',
+      'post': postData,
+      'post_user_info': {
+        'kind': 'blogger#postPerUserInfo',
+        'postId': postId,
+        'userId': userId,
+        'hasEditAccess': true,
+      }
+    };
+  }
+
+  /// GET /blogger/v3/users/{userId}/blogs/{blogId}/posts
+  Future<Map<String, dynamic>> postUserInfosList(
+    Session session, {
+    required String userId,
+    required String blogId,
+    String? apiKey,
+    String? authToken,
+  }) async {
+    final postsData = await postsList(session, blogId: blogId, apiKey: apiKey, authToken: authToken);
+    return {
+      'kind': 'blogger#postUserInfosList',
+      'items': postsData['items'] ?? [],
     };
   }
 
